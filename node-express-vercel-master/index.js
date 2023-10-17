@@ -32,7 +32,11 @@ app.get('/api/PokemonEncyclopedia_v1/pokemonencyclopedia/:pokemonId/', async (re
     pokemonId = parseInt(pokemonId);
 
     try{
+        console.log("access database");
+        console.log(process.env.MONGODB_URI);
         const pokemon = await db.collection('pokemonInfo').findOne({pokemonId});
+        console.log(pokemon);
+
         if (pokemon) {
             // const upvoteIds = pokemon.upvotes || [];
             res.json(pokemon);
