@@ -37,7 +37,8 @@ app.get('/api/PokemonEncyclopedia_v1/pokemonencyclopedia/:pokemonId/', async (re
         }
     }
     catch(e){
-        res.send(e);
+        console.log(e);
+        res.status(404).send("Database is having some difficulties");
     }
 
 });
