@@ -25,18 +25,15 @@ app.get('/', (req,res)=>{
     res.send("Api is working");
 })
 
-app.get('https://pokemon-encyclopedia-backend.vercel.app/api/PokemonEncyclopedia_v1/pokemonencyclopedia/:pokemonId/', async (req,res)=>{
+//api/PokemonEncyclopedia_v1/pokemonencyclopedia/:pokemonId/
+app.get('/api/:pokemonId/', async (req,res)=>{
     let {pokemonId} = req.params;
 
     // const pokemon = await db.collection('pokemonInfo')
     pokemonId = parseInt(pokemonId);
 
     try{
-        console.log("access database");
-        console.log(process.env.MONGODB_URI);
         const pokemon = await db.collection('pokemonInfo').findOne({pokemonId});
-        console.log(pokemon);
-
         if (pokemon) {
             // const upvoteIds = pokemon.upvotes || [];
             res.json(pokemon);
