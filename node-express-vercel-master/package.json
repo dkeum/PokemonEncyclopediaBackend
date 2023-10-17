@@ -4,7 +4,7 @@
   "description": "",
   "type": "module",
   "main": "index.js",
-  "engines":{
+  "engines": {
     "node": "18.x"
   },
   "scripts": {
@@ -19,7 +19,8 @@
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "mongodb": "^6.1.0",
-    "react-scripts": "^5.0.1"
+    "react-scripts": "^5.0.1",
+    "vercel": "^32.4.1"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
