@@ -4,14 +4,12 @@ import cors from "cors";
 import { MongoClient } from 'mongodb';
 
 let db; 
-let mongodb = async () => {
+const mongodb = async () => {
     const client = new MongoClient(`${process.env.MONGODB_URI}`);
-    // const client = new MongoClient(`${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@pokedex.hdijcp3.mongodb.net/?retryWrites=true&w=majority`);
     await client.connect();
     db = client.db("Pokedex");
+    console.log("Successfully connected to Database")
 }
-
-db = mongodb(); 
 const app = express();
 app.use(cors(
     {
@@ -108,8 +106,8 @@ app.post('/api/PokemonEncyclopedia_v1/pokemonencyclopedia/:pokemonId/comments', 
 
 const PORT = process.env.PORT || 8000; 
 
-
 app.listen(PORT, () => {
     console.log('Server is listening on port ' + PORT);
+    db = mongodb(); 
 });
 
