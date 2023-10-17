@@ -25,7 +25,7 @@ app.get('/', (req,res)=>{
     res.send("Api is working");
 })
 
-app.get('/api/PokemonEncyclopedia_v1/pokemonencyclopedia/:pokemonId/', async (req,res)=>{
+app.get('https://pokemon-encyclopedia-backend.vercel.app/api/PokemonEncyclopedia_v1/pokemonencyclopedia/:pokemonId/', async (req,res)=>{
     let {pokemonId} = req.params;
 
     // const pokemon = await db.collection('pokemonInfo')
