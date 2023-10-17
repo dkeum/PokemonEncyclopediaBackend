@@ -26,15 +26,18 @@ app.get('/api/PokemonEncyclopedia_v1/pokemonencyclopedia/:pokemonId/', async (re
     // const pokemon = await db.collection('pokemonInfo')
     pokemonId = parseInt(pokemonId);
 
-    const pokemon = await db.collection('pokemonInfo').findOne({pokemonId});
-    // console.log(pokemon);
-
-    if (pokemon) {
-        // const upvoteIds = pokemon.upvotes || [];
-        res.json(pokemon);
-    } else {
-        // res.sendStatus("404");
-        res.send("Pokemon doesnt exist yet");
+    try{
+        const pokemon = await db.collection('pokemonInfo').findOne({pokemonId});
+        if (pokemon) {
+            // const upvoteIds = pokemon.upvotes || [];
+            res.json(pokemon);
+        } else {
+            // res.sendStatus("404");
+            res.send("Pokemon doesnt exist yet");
+        }
+    }
+    catch(e){
+        res.send(e);
     }
 
 });
