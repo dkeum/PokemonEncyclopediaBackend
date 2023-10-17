@@ -6,6 +6,7 @@ import { MongoClient } from 'mongodb';
 let db; 
 let mongodb = async () => {
     const client = new MongoClient(`${process.env.MONGODB_URI}`);
+    // const client = new MongoClient(`${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@pokedex.hdijcp3.mongodb.net/?retryWrites=true&w=majority`);
     await client.connect();
     db = client.db("Pokedex");
 }
