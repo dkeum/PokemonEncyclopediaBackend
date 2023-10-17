@@ -1,11 +1,17 @@
 import express from "express";
-import {db,connectToDb} from './db.js'
 import 'dotenv/config';
 import cors from "cors";
+import { MongoClient } from 'mongodb';
 
+let db; 
+let mongodb = async () => {
+    const client = new MongoClient(`mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@pokedex.hdijcp3.mongodb.net/?retryWrites=true&w=majority`);
+    await client.connect();
+    db = client.db("Pokedex");
+}
 
+db = mongodb(); 
 const app = express();
-
 app.use(cors(
     {
         origin: ["https://pokemonencyclopedia.vercel.app"],
@@ -101,9 +107,6 @@ app.post('/api/PokemonEncyclopedia_v1/pokemonencyclopedia/:pokemonId/comments', 
 
 const PORT = process.env.PORT || 8000; 
 
-connectToDb(() => {
-    console.log('Successfully connected to database!');
-});
 
 app.listen(PORT, () => {
     console.log('Server is listening on port ' + PORT);
