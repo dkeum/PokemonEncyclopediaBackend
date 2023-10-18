@@ -17,7 +17,7 @@ try {
 const app = express();
 app.use(cors(
     {
-        origin: ["https://pokemonencyclopedia.vercel.app"],
+        origin: ["https://pokemon-encyclopedia-v1.vercel.app/","http://localhost:3000"],
         methods: ["POST","PUT","GET"],
         credentials: true
     }
@@ -44,7 +44,6 @@ app.get('/api/PokemonEncyclopedia_v1/pokemonencyclopedia/:pokemonId/', async (re
             // const upvoteIds = pokemon.upvotes || [];
             res.json(pokemon);
         } else {
-            // res.sendStatus("404");
             res.send("Pokemon doesnt exist yet");
         }
     }
