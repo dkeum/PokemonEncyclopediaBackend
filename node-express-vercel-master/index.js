@@ -17,7 +17,7 @@ try {
 const app = express();
 app.use(cors(
     {
-        origin: ["https://pokemon-encyclopedia-v1.vercel.app/","http://localhost:3000"],
+        origin: ["https://pokemon-encyclopedia-v1.vercel.app","http://localhost:3000"],
         methods: ["POST","PUT","GET"],
         credentials: true
     }
