@@ -15,34 +15,30 @@ try {
 
 
 const app = express();
-// app.use(cors(
-//     {
-//         origin: ["https://pokemonencyclopedia.vercel.app"],
-//         methods: ["POST","PUT","GET"],
-//         credentials: true
-//     }
-// ));
+app.use(cors(
+    {
+        origin: ["https://pokemonencyclopedia.vercel.app"],
+        methods: ["POST","PUT","GET"],
+        credentials: true
+    }
+));
 
 app.use(express.json());
 
 app.get('/', async (req,res)=>{
-    let db = conn.db("Pokedex");
-    let collection = await db.collection("pokemonInfo");
-    let results = await collection.find({})
-    .limit(50)
-    .toArray();
-     res.send(results).status(200);
+
+     res.send("API is working")
 })
 
-//api/PokemonEncyclopedia_v1/pokemonencyclopedia/:pokemonId/
-app.get('/api/:pokemonId/', async (req,res)=>{
+
+app.get('/api/PokemonEncyclopedia_v1/pokemonencyclopedia/:pokemonId/', async (req,res)=>{
     let {pokemonId} = req.params;
 
     // const pokemon = await db.collection('pokemonInfo')
     pokemonId = parseInt(pokemonId);
 
     try{
-
+        let db = conn.db("Pokedex");
         const pokemon = await db.collection('pokemonInfo').findOne({pokemonId});
         if (pokemon) {
             // const upvoteIds = pokemon.upvotes || [];
@@ -59,60 +55,66 @@ app.get('/api/:pokemonId/', async (req,res)=>{
 
 });
 
-// app.put('/api/PokemonEncyclopedia_v1/pokemonencyclopedia/:pokemonId/upvote', async (req,res)=>{
-//     let {pokemonId} = req.params;
+app.put('/api/PokemonEncyclopedia_v1/pokemonencyclopedia/:pokemonId/upvote', async (req,res)=>{
+    let {pokemonId} = req.params;
 
-//     // const pokemon = await db.collection('pokemonInfo')
-//     pokemonId = parseInt(pokemonId);
+    pokemonId = parseInt(pokemonId);
 
-//     const pokemon = await db.collection('pokemonInfo').findOne({pokemonId});
+    try{
+        let db = conn.db("Pokedex");
+        const pokemon = await db.collection('pokemonInfo').findOne({pokemonId});
+        if(pokemon){
+            await db.collection('pokemonInfo').updateOne({pokemonId}, 
+            {
+                $inc: { upvotes: 1 }
+            });
+            const updatedPokemon = await db.collection('pokemonInfo').findOne({ pokemonId });
+            res.json(updatedPokemon);
+        }
+        else{
+            res.send("Pokemon doesn't exist").status(404);
+        }
+    }catch(e){
+        console.log(e);
+        res.status(404).send("Database is having some difficulties");
+    }
+  
+});
 
-//     if(pokemon){
-//         await db.collection('pokemonInfo').updateOne({pokemonId}, 
-//         {
-//             $inc: { upvotes: 1 }
-//         });
-//         const updatedPokemon = await db.collection('pokemonInfo').findOne({ pokemonId });
-//         res.json(updatedPokemon);
-//     }
-//     else{
-//         res.send("Pokemon doesn't exist").status(404);
-//     }
-// });
+app.post('/api/PokemonEncyclopedia_v1/pokemonencyclopedia/:pokemonId/comments', async (req,res)=>{
 
-// app.post('/api/PokemonEncyclopedia_v1/pokemonencyclopedia/:pokemonId/comments', async (req,res)=>{
+    let {pokemonId} = req.params;
+    pokemonId = parseInt(pokemonId);
+    const {postedBy, text} = req.body;
+    
+    let db = conn.db("Pokedex");
+    await db.collection('pokemonInfo').updateOne({ pokemonId }, {
+        $push: { comments: { postedBy, text}  },
+    });
 
-//     let {pokemonId} = req.params;
-//     pokemonId = parseInt(pokemonId);
-//     const {postedBy, text} = req.body;
+    const pokemon = await db.collection('pokemonInfo').findOne({ pokemonId });
 
-//     await db.collection('pokemonInfo').updateOne({ pokemonId }, {
-//         $push: { comments: { postedBy, text}  },
-//     });
-
-//     const pokemon = await db.collection('pokemonInfo').findOne({ pokemonId });
-
-//     if(pokemon){
-//         res.json(pokemon);
-//     }
-//     else{
-//         try{
-//         const newPokemon = {
-//             pokemonId,
-//             upvotes: 0,
-//             comments: [{ postedBy, text }],
-//         };
-//         await db.collection('pokemonInfo').insertOne(newPokemon);
-//         res.json(newPokemon);
-//         }
-//         catch(e) {
-//             console.error(error);
-//             res.status(500).send("Internal Server Error");
-//         }
-//     }
+    if(pokemon){
+        res.json(pokemon);
+    }
+    else{
+        try{
+        const newPokemon = {
+            pokemonId,
+            upvotes: 0,
+            comments: [{ postedBy, text }],
+        };
+        await db.collection('pokemonInfo').insertOne(newPokemon);
+        res.json(newPokemon);
+        }
+        catch(e) {
+            console.error(error);
+            res.status(500).send("Internal Server Error");
+        }
+    }
 
     
-// });
+});
 
 
 const PORT = process.env.PORT || 8000; 
