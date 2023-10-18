@@ -3,6 +3,10 @@ import 'dotenv/config';
 import cors from "cors";
 import { MongoClient } from "mongodb";
 
+import admin from 'firebase-admin';
+import fs from 'fs';
+
+
 const connectionString = "mongodb+srv://vercel-admin-user:PQqaEIYhj9qMY5U3@pokedex.hdijcp3.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 const client = new MongoClient(connectionString);
 let conn;
@@ -11,6 +15,14 @@ try {
 } catch(e) {
   console.error(e);
 }
+
+const credentials = JSON.parse(
+    fs.readFileSync('./credentials.json')
+);
+admin.initializeApp({
+    credential: admin.credential.cert(credentials),
+});
+
 
 
 
@@ -25,11 +37,27 @@ app.use(cors(
 
 app.use(express.json());
 
+
 app.get('/', async (req,res)=>{
 
      res.send("API is working")
 })
 
+app.use(async (req, res, next) => {
+    const { authtoken } = req.headers;
+
+    if (authtoken) {
+        try {
+            req.user = await admin.auth().verifyIdToken(authtoken);
+        } catch (e) {
+            return res.sendStatus(400);
+        }
+    }
+
+    req.user = req.user || {};
+
+    next();
+});
 
 app.get('/api/PokemonEncyclopedia_v1/pokemonencyclopedia/:pokemonId/', async (req,res)=>{
     let {pokemonId} = req.params;
@@ -52,6 +80,14 @@ app.get('/api/PokemonEncyclopedia_v1/pokemonencyclopedia/:pokemonId/', async (re
         res.status(404).send("Database is having some difficulties");
     }
 
+});
+
+app.use((req, res, next) => {
+    if (req.user) {
+        next();
+    } else {
+        res.sendStatus(401);
+    }
 });
 
 app.put('/api/PokemonEncyclopedia_v1/pokemonencyclopedia/:pokemonId/upvote', async (req,res)=>{
@@ -78,6 +114,14 @@ app.put('/api/PokemonEncyclopedia_v1/pokemonencyclopedia/:pokemonId/upvote', asy
         res.status(404).send("Database is having some difficulties");
     }
   
+});
+
+app.use((req, res, next) => {
+    if (req.user) {
+        next();
+    } else {
+        res.sendStatus(401);
+    }
 });
 
 app.post('/api/PokemonEncyclopedia_v1/pokemonencyclopedia/:pokemonId/comments', async (req,res)=>{
