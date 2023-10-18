@@ -16,13 +16,17 @@ try {
   console.error(e);
 }
 
-const credentials = JSON.parse(
-    fs.readFileSync('./credentials.json')
-);
-admin.initializeApp({
-    credential: admin.credential.cert(credentials),
-});
-
+try{
+    const credentials = JSON.parse(
+        fs.readFileSync('./credentials.json')
+    );
+    admin.initializeApp({
+        credential: admin.credential.cert(credentials),
+    });
+    }
+catch(e){
+    console.error(e);
+}
 
 
 
@@ -55,7 +59,6 @@ app.use(async (req, res, next) => {
     }
 
     req.user = req.user || {};
-
     next();
 });
 
