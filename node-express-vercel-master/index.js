@@ -11,7 +11,7 @@ try {
 } catch(e) {
   console.error(e);
 }
-let db = conn.db("Pokedex");
+
 
 
 const app = express();
@@ -26,12 +26,12 @@ const app = express();
 app.use(express.json());
 
 app.get('/', async (req,res)=>{
+    let db = conn.db("Pokedex");
     let collection = await db.collection("pokemonInfo");
     let results = await collection.find({})
     .limit(50)
     .toArray();
      res.send(results).status(200);
-     res.send("Api is working");
 })
 
 //api/PokemonEncyclopedia_v1/pokemonencyclopedia/:pokemonId/
